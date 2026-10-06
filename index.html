@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hatimi Hardware - Pro Wardrobe Visualizer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -15,11 +15,14 @@
             --drawer-flip: 1;
         }
 
+        /* Hatimi Premium Branding */
         .bg-hatimi-navy { background-color: #0B192C; }
         .text-hatimi-gold { color: #D4AF37; }
         .bg-hatimi-gold { background-color: #D4AF37; }
         .border-hatimi-gold { border-color: #D4AF37; }
         
+        body { overscroll-behavior-y: none; } /* Prevents pull-to-refresh on mobile */
+
         .cabinet-panel {
             box-shadow: inset 2px 2px 5px rgba(255,255,255,0.2), inset -3px -3px 8px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.3);
             border: 1px solid rgba(0,0,0,0.8);
@@ -32,7 +35,7 @@
             transform-style: preserve-3d;
         }
 
-        .wardrobe-container { perspective: 1200px; }
+        .wardrobe-container { perspective: 1200px; touch-action: none; } /* Stops mobile scroll interference */
         .door-left { transform-origin: left center; cursor: pointer; }
         .door-left.is-open { transform: rotateY(-105deg); }
         .door-right { transform-origin: right center; cursor: pointer; }
@@ -68,24 +71,25 @@
             box-shadow: 2px 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
             transition: all 0.2s ease;
         }
-        .btn-premium-card:hover {
+        .btn-premium-card:active, .btn-premium-card:hover {
             border-color: #D4AF37;
             background: linear-gradient(145deg, #273445, #111827);
             box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
             transform: translateY(-1px);
         }
 
+        /* Touch-friendly sliders */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]:focus { outline: none; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 16px; width: 16px;
+            -webkit-appearance: none; height: 20px; width: 20px; /* Larger for mobile tap */
             border-radius: 50%; background: #D4AF37; cursor: pointer;
-            margin-top: -6px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); transition: transform 0.1s;
+            margin-top: -8px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); transition: transform 0.1s;
         }
-        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.2); }
         input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px; cursor: pointer;
-            background: #374151; border-radius: 2px; border: 1px solid #1f2937;
+            width: 100%; height: 6px; cursor: pointer;
+            background: #374151; border-radius: 3px; border: 1px solid #1f2937;
         }
 
         .catalog-item-large {
@@ -95,35 +99,36 @@
             cursor: pointer; padding: 12px 8px; transition: all 0.2s ease;
             height: 120px; position: relative; box-shadow: 2px 4px 8px rgba(0,0,0,0.3);
         }
-        .catalog-item-large:hover {
+        .catalog-item-large:active, .catalog-item-large:hover {
             border-color: #D4AF37; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
         }
         .catalog-item-large img {
-            max-height: 70px; max-width: 100%; object-fit: contain; 
+            max-height: 65px; max-width: 100%; object-fit: contain; 
             filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.6)); margin-bottom: 8px;
         }
         
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0B192C; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
-
-        /* Transparent Checkerboard for Image Preview */
+        /* Checkboard for preview */
         .bg-checker {
             background-color: #e5e5f7;
             background-image:  linear-gradient(45deg, #c4c4c4 25%, transparent 25%), linear-gradient(-45deg, #c4c4c4 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #c4c4c4 75%), linear-gradient(-45deg, transparent 75%, #c4c4c4 75%);
             background-size: 20px 20px;
             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
         }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0B192C; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
     </style>
 </head>
-<body class="bg-gray-300 h-screen flex flex-col md:flex-row overflow-hidden font-sans">
+<!-- flex-col on mobile, md:flex-row on desktop. overflow-y-auto enables natural mobile scroll -->
+<body class="bg-gray-300 h-screen flex flex-col md:flex-row overflow-y-auto md:overflow-hidden font-sans">
 
-    <!-- Left Side: Canvas -->
-    <div class="flex-1 p-4 flex flex-col items-center justify-center relative overflow-hidden" id="canvas-container" style="background: radial-gradient(circle, #e2e8f0, #94a3b8);">
-        <div id="ai-suggestion" class="absolute top-4 left-4 right-4 bg-hatimi-gold text-hatimi-navy font-bold p-3 rounded shadow-lg text-center hidden z-20"></div>
+    <!-- Left Side: Canvas (Responsive height: 50vh on mobile, full screen on desktop) -->
+    <div class="w-full md:flex-1 h-[50vh] md:h-screen p-4 flex flex-col items-center justify-center relative shrink-0 z-10" id="canvas-container" style="background: radial-gradient(circle, #e2e8f0, #94a3b8);">
+        <div id="ai-suggestion" class="absolute top-4 left-4 right-4 bg-hatimi-gold text-hatimi-navy font-bold p-3 rounded shadow-lg text-center hidden z-20 text-xs sm:text-sm"></div>
 
-        <div class="wardrobe-container relative w-full max-w-[340px] md:max-w-[420px] h-[75vh] md:h-[85vh] bg-gray-900 rounded-sm shadow-2xl p-2 pb-4 flex flex-col gap-2 border-b-[12px] border-black">
+        <div class="wardrobe-container relative w-full max-w-[260px] sm:max-w-[320px] md:max-w-[420px] h-[40vh] sm:h-[45vh] md:h-[75vh] max-h-[800px] bg-gray-900 rounded-sm shadow-2xl p-2 pb-4 flex flex-col gap-1 sm:gap-2 border-b-[8px] sm:border-b-[12px] border-black">
             <div class="absolute inset-2 bg-gray-800 shadow-inner flex flex-col gap-1 p-1 z-0">
                 <div class="h-1/3 border-b-4 border-gray-950 shadow-[0_2px_4px_rgba(0,0,0,0.5)]"></div>
                 <div class="h-1/3 border-b-4 border-gray-950 shadow-[0_2px_4px_rgba(0,0,0,0.5)]"></div>
@@ -131,142 +136,143 @@
             </div>
 
             <div class="flex-1 flex gap-1 relative z-10 perspective-1000">
-                <div id="door-left" class="mica-panel cabinet-panel w-1/2 h-full rounded-sm door-left" title="Click to open/close"></div>
-                <div id="door-right" class="mica-panel cabinet-panel w-1/2 h-full rounded-sm door-right" title="Click to open/close"></div>
+                <div id="door-left" class="mica-panel cabinet-panel w-1/2 h-full rounded-sm door-left" title="Tap to open/close"></div>
+                <div id="door-right" class="mica-panel cabinet-panel w-1/2 h-full rounded-sm door-right" title="Tap to open/close"></div>
             </div>
             
             <div class="h-1/4 flex flex-col gap-1 relative z-10">
-                <div id="drawer-top" class="mica-panel cabinet-panel drawer-panel w-full h-1/2 rounded-sm" title="Click to open/close"></div>
-                <div id="drawer-bottom" class="mica-panel cabinet-panel drawer-panel w-full h-1/2 rounded-sm" title="Click to open/close"></div>
+                <div id="drawer-top" class="mica-panel cabinet-panel drawer-panel w-full h-1/2 rounded-sm" title="Tap to open/close"></div>
+                <div id="drawer-bottom" class="mica-panel cabinet-panel drawer-panel w-full h-1/2 rounded-sm" title="Tap to open/close"></div>
             </div>
-            <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-[110%] h-6 bg-black blur-xl opacity-40 -z-10"></div>
+            <div class="absolute -bottom-6 sm:-bottom-8 left-1/2 transform -translate-x-1/2 w-[110%] h-6 bg-black blur-xl opacity-40 -z-10"></div>
         </div>
-        <p class="absolute bottom-4 text-gray-600 font-bold tracking-widest uppercase text-xs text-center w-full">👆 Click doors and drawers to open them</p>
+        <p class="absolute bottom-2 md:bottom-4 text-gray-600 font-bold tracking-widest uppercase text-[10px] md:text-xs text-center w-full">👆 Tap doors & drawers to open</p>
     </div>
 
     <!-- Right Side: Controls -->
-    <div class="w-full md:w-[450px] bg-hatimi-navy text-white p-6 shadow-2xl flex flex-col overflow-y-auto border-t-4 md:border-t-0 md:border-l-4 border-hatimi-gold relative z-50">
+    <div class="w-full md:w-[400px] lg:w-[450px] bg-hatimi-navy text-white p-4 sm:p-6 shadow-[0_-10px_25px_rgba(0,0,0,0.3)] md:shadow-2xl flex flex-col md:h-screen md:overflow-y-auto border-t-4 md:border-t-0 md:border-l-4 border-hatimi-gold relative z-50 shrink-0">
         
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-700">
-            <img src="logo.png" alt="Hatimi Hardware" class="max-w-[50px] max-h-[50px] object-contain drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]" onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='flex';">
+        <div class="flex items-center gap-3 mb-5 sm:mb-6 pb-4 border-b border-gray-700">
+            <img src="logo.png" alt="Hatimi Hardware" class="max-w-[40px] sm:max-w-[50px] max-h-[40px] sm:max-h-[50px] object-contain drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]" onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='flex';">
             <div id="fallback-logo" style="display:none;" class="w-10 h-10 bg-hatimi-gold rounded-lg items-center justify-center font-bold text-hatimi-navy text-xl shadow-[0_0_15px_rgba(212,175,55,0.4)]">H</div>
             <div>
-                <h1 class="text-xl font-bold text-white tracking-wide">Hatimi Hardware</h1>
-                <h2 class="text-xs font-light text-hatimi-gold tracking-widest uppercase">Pro Visualizer</h2>
+                <h1 class="text-lg sm:text-xl font-bold text-white tracking-wide">Hatimi Hardware</h1>
+                <h2 class="text-[10px] sm:text-xs font-light text-hatimi-gold tracking-widest uppercase">Pro Visualizer</h2>
             </div>
         </div>
 
-        <div class="mb-6">
-            <h3 class="text-[10px] uppercase tracking-widest text-gray-400 mb-3 font-semibold flex items-center gap-2">
+        <div class="mb-5 sm:mb-6">
+            <h3 class="text-[10px] uppercase tracking-widest text-gray-400 mb-2 sm:mb-3 font-semibold flex items-center gap-2">
                 <span class="w-4 h-[1px] bg-gray-500"></span> 1. Surface Laminate
             </h3>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-2 sm:gap-3">
                 <div class="flex items-center justify-between bg-[#111827] p-2 rounded-lg border border-gray-700 shadow-inner">
-                    <span class="text-xs text-gray-300 ml-2">Solid Color</span>
+                    <span class="text-[10px] sm:text-xs text-gray-300 ml-1 sm:ml-2">Solid Color</span>
                     <input type="color" value="#1a202c" onchange="applySolidColor(this.value)" class="w-8 h-8 cursor-pointer rounded bg-transparent border-0">
                 </div>
-                <div class="relative bg-[#111827] rounded-lg border border-gray-700 hover:border-hatimi-gold transition cursor-pointer shadow-inner overflow-hidden group">
-                    <label class="flex items-center justify-center cursor-pointer w-full h-full p-2 gap-2">
+                <div class="relative bg-[#111827] rounded-lg border border-gray-700 active:border-hatimi-gold hover:border-hatimi-gold transition cursor-pointer shadow-inner overflow-hidden group">
+                    <label class="flex items-center justify-center cursor-pointer w-full h-full p-2 gap-1 sm:gap-2">
                         <svg class="w-4 h-4 text-gray-400 group-hover:text-hatimi-gold transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
-                        <span class="text-xs font-medium text-gray-300 group-hover:text-white transition">Scan Mica</span>
+                        <span class="text-[10px] sm:text-xs font-medium text-gray-300 group-hover:text-white transition">Scan Mica</span>
                         <input type="file" accept="image/*" class="hidden" onchange="applyMicaImage(event)">
                     </label>
                 </div>
             </div>
         </div>
 
-        <div class="bg-gray-800/40 p-4 rounded-xl border border-gray-700 mb-5 relative overflow-hidden">
+        <div class="bg-gray-800/40 p-3 sm:p-4 rounded-xl border border-gray-700 mb-4 sm:mb-5 relative overflow-hidden">
             <div class="absolute left-0 top-0 w-1 h-full bg-hatimi-gold opacity-80"></div>
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xs uppercase tracking-widest text-white font-bold ml-1">2. Door Hardware</h3>
-                <div class="flex gap-3">
-                    <button onclick="toggleFlip('door')" class="text-gray-400 hover:text-hatimi-gold transition" title="Mirror Handle">
+            <div class="flex justify-between items-center mb-3 sm:mb-4">
+                <h3 class="text-[10px] sm:text-xs uppercase tracking-widest text-white font-bold ml-1">2. Door Hardware</h3>
+                <div class="flex gap-2 sm:gap-3">
+                    <button onclick="toggleFlip('door')" class="text-gray-400 active:text-hatimi-gold hover:text-hatimi-gold transition p-1" title="Mirror Handle">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                     </button>
-                    <button onclick="toggleRotation('door')" class="text-gray-400 hover:text-hatimi-gold transition" title="Rotate Handle">
+                    <button onclick="toggleRotation('door')" class="text-gray-400 active:text-hatimi-gold hover:text-hatimi-gold transition p-1" title="Rotate Handle">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     </button>
                 </div>
             </div>
             
-            <button onclick="openCatalog('door')" class="btn-premium-card w-full rounded-lg p-3 flex items-center justify-between group mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded bg-gray-900 border border-gray-700 flex items-center justify-center group-hover:border-hatimi-gold transition shadow-inner">
+            <button onclick="openCatalog('door')" class="btn-premium-card w-full rounded-lg p-2 sm:p-3 flex items-center justify-between group mb-3 sm:mb-4">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="w-8 h-8 sm:w-9 sm:h-9 rounded bg-gray-900 border border-gray-700 flex items-center justify-center group-hover:border-hatimi-gold transition shadow-inner">
                         <svg class="w-4 h-4 text-hatimi-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                     </div>
                     <div class="text-left">
-                        <div class="text-white font-medium text-sm">Select Door Handle</div>
-                        <div class="text-[10px] text-gray-400">Open Master Inventory</div>
+                        <div class="text-gray-100 font-medium text-xs sm:text-sm">Select Door Handle</div>
+                        <div class="text-[9px] sm:text-[10px] text-gray-400">Open Master Inventory</div>
                     </div>
                 </div>
-                <svg class="w-5 h-5 text-gray-500 group-hover:text-hatimi-gold transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 group-hover:text-hatimi-gold transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </button>
             
-            <div class="flex items-center gap-4 px-1">
-                <span class="text-[10px] text-gray-400 uppercase tracking-widest">Size</span>
+            <div class="flex items-center gap-3 sm:gap-4 px-1">
+                <span class="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-widest">Size</span>
                 <input type="range" min="0.5" max="3.0" step="0.1" value="1" class="w-full" oninput="updateSize('door', this.value)">
-                <span id="door-size-val" class="text-xs text-hatimi-gold font-mono w-8 text-right">100%</span>
+                <span id="door-size-val" class="text-[10px] sm:text-xs text-hatimi-gold font-mono w-8 text-right">100%</span>
             </div>
         </div>
 
-        <div class="bg-gray-800/40 p-4 rounded-xl border border-gray-700 mb-2 relative overflow-hidden">
+        <div class="bg-gray-800/40 p-3 sm:p-4 rounded-xl border border-gray-700 mb-4 relative overflow-hidden">
             <div class="absolute left-0 top-0 w-1 h-full bg-gray-500 opacity-80"></div>
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xs uppercase tracking-widest text-white font-bold ml-1">3. Drawer Hardware</h3>
-                <div class="flex gap-3">
-                    <button onclick="toggleFlip('drawer')" class="text-gray-400 hover:text-gray-200 transition" title="Mirror Handle">
+            <div class="flex justify-between items-center mb-3 sm:mb-4">
+                <h3 class="text-[10px] sm:text-xs uppercase tracking-widest text-white font-bold ml-1">3. Drawer Hardware</h3>
+                <div class="flex gap-2 sm:gap-3">
+                    <button onclick="toggleFlip('drawer')" class="text-gray-400 active:text-gray-200 hover:text-gray-200 transition p-1" title="Mirror Handle">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                     </button>
-                    <button onclick="toggleRotation('drawer')" class="text-gray-400 hover:text-gray-200 transition" title="Rotate Handle">
+                    <button onclick="toggleRotation('drawer')" class="text-gray-400 active:text-gray-200 hover:text-gray-200 transition p-1" title="Rotate Handle">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     </button>
                 </div>
             </div>
             
-            <button onclick="openCatalog('drawer')" class="btn-premium-card w-full rounded-lg p-3 flex items-center justify-between group mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded bg-gray-900 border border-gray-700 flex items-center justify-center group-hover:border-gray-400 transition shadow-inner">
+            <button onclick="openCatalog('drawer')" class="btn-premium-card w-full rounded-lg p-2 sm:p-3 flex items-center justify-between group mb-3 sm:mb-4">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="w-8 h-8 sm:w-9 sm:h-9 rounded bg-gray-900 border border-gray-700 flex items-center justify-center group-hover:border-gray-400 transition shadow-inner">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                     </div>
                     <div class="text-left">
-                        <div class="text-white font-medium text-sm">Select Drawer Handle</div>
-                        <div class="text-[10px] text-gray-400">Open Master Inventory</div>
+                        <div class="text-gray-100 font-medium text-xs sm:text-sm">Select Drawer Handle</div>
+                        <div class="text-[9px] sm:text-[10px] text-gray-400">Open Master Inventory</div>
                     </div>
                 </div>
-                <svg class="w-5 h-5 text-gray-500 group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </button>
             
-            <div class="flex items-center gap-4 px-1">
-                <span class="text-[10px] text-gray-400 uppercase tracking-widest">Size</span>
+            <div class="flex items-center gap-3 sm:gap-4 px-1">
+                <span class="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-widest">Size</span>
                 <input type="range" min="0.3" max="3.0" step="0.1" value="1" class="w-full" oninput="updateSize('drawer', this.value)">
-                <span id="drawer-size-val" class="text-xs text-gray-300 font-mono w-8 text-right">100%</span>
+                <span id="drawer-size-val" class="text-[10px] sm:text-xs text-gray-300 font-mono w-8 text-right">100%</span>
             </div>
         </div>
     </div>
 
-    <!-- POPUP CATALOG MODAL -->
-    <div id="catalog-modal" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center backdrop-blur-sm p-4">
-        <div class="bg-[#0B192C] border border-gray-700 rounded-xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
-            <div class="flex justify-between items-center p-5 border-b border-gray-800 bg-[#0B192C]">
+    <!-- POPUP CATALOG MODAL (Responsive Grid) -->
+    <div id="catalog-modal" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center backdrop-blur-sm p-3 sm:p-4">
+        <div class="bg-[#0B192C] border border-gray-700 rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center p-4 sm:p-5 border-b border-gray-800 bg-[#0B192C]">
                 <div>
-                    <h2 id="catalog-title" class="text-xl font-bold text-white tracking-wide">Hardware Catalog</h2>
+                    <h2 id="catalog-title" class="text-lg sm:text-xl font-bold text-white tracking-wide">Hardware Catalog</h2>
                 </div>
                 <button onclick="closeCatalog()" class="text-gray-500 hover:text-white transition w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-800">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
-            <div id="catalog-grid" class="p-6 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 overflow-y-auto bg-[#111827] flex-1 shadow-inner">
+            <!-- Mobile: 2 cols, Tablet: 3 cols, Desktop: 4+ cols -->
+            <div id="catalog-grid" class="p-4 sm:p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5 overflow-y-auto bg-[#111827] flex-1 shadow-inner">
                 <!-- Handles injected here -->
             </div>
 
-            <div class="p-5 border-t border-gray-800 bg-[#0B192C]">
-                <div class="relative bg-[#111827] p-4 rounded-lg border border-dashed border-hatimi-gold hover:bg-gray-800 transition cursor-pointer flex justify-center group">
-                    <label class="flex items-center gap-3 cursor-pointer w-full justify-center">
-                        <div class="w-8 h-8 rounded-full bg-hatimi-gold/20 flex items-center justify-center group-hover:bg-hatimi-gold transition">
-                            <svg class="w-4 h-4 text-hatimi-gold group-hover:text-[#0B192C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <div class="p-4 sm:p-5 border-t border-gray-800 bg-[#0B192C]">
+                <div class="relative bg-[#111827] p-3 sm:p-4 rounded-lg border border-dashed border-hatimi-gold active:bg-gray-800 hover:bg-gray-800 transition cursor-pointer flex justify-center group">
+                    <label class="flex items-center gap-2 sm:gap-3 cursor-pointer w-full justify-center">
+                        <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-hatimi-gold/20 flex items-center justify-center group-hover:bg-hatimi-gold transition">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 text-hatimi-gold group-hover:text-[#0B192C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         </div>
-                        <span class="text-sm font-semibold text-hatimi-gold tracking-wide">Scan / Upload New Handle to Catalog</span>
+                        <span id="upload-btn-text" class="text-xs sm:text-sm font-semibold text-hatimi-gold tracking-wide">Scan / Upload New Handle</span>
                         <input type="file" accept="image/*" class="hidden" onchange="triggerUploadPreview(event)">
                     </label>
                 </div>
@@ -274,29 +280,29 @@
         </div>
     </div>
 
-    <!-- NEW: UPLOAD ERASER TUNER MODAL -->
-    <div id="upload-modal" class="fixed inset-0 bg-black/90 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <!-- UPLOAD ERASER TUNER MODAL -->
+    <div id="upload-modal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-3 sm:p-4 backdrop-blur-md">
         <div class="bg-[#0B192C] border border-gray-700 rounded-xl w-full max-w-md flex flex-col overflow-hidden shadow-2xl">
-            <div class="p-4 border-b border-gray-800 flex justify-between items-center">
-                <h2 class="text-white font-bold tracking-wide">Adjust Magic Eraser</h2>
+            <div class="p-3 sm:p-4 border-b border-gray-800 flex justify-between items-center">
+                <h2 class="text-white text-sm sm:text-base font-bold tracking-wide">Adjust Magic Eraser</h2>
             </div>
             
             <div class="p-4 flex flex-col items-center bg-checker border-b border-gray-800">
-                <canvas id="preview-canvas" class="max-h-48 object-contain filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]"></canvas>
+                <canvas id="preview-canvas" class="max-h-40 sm:max-h-48 object-contain filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]"></canvas>
             </div>
             
-            <div class="p-5 bg-[#111827]">
+            <div class="p-4 sm:p-5 bg-[#111827]">
                 <div class="flex justify-between items-end mb-2">
-                    <label class="text-xs text-gray-400">Eraser Strength</label>
-                    <span id="tolerance-val" class="text-xs font-mono text-hatimi-gold">20</span>
+                    <label class="text-[10px] sm:text-xs text-gray-400">Eraser Strength</label>
+                    <span id="tolerance-val" class="text-xs sm:text-sm font-mono text-hatimi-gold">20</span>
                 </div>
                 <input type="range" id="tolerance-slider" min="1" max="80" value="20" class="w-full" oninput="updatePreview()">
-                <p class="text-[10px] text-gray-500 mt-3 italic">Fixing a silver handle? Slide left if it gets eaten, slide right if a white box remains.</p>
+                <p class="text-[9px] sm:text-[10px] text-gray-500 mt-3 italic leading-relaxed">Fixing a silver handle? Slide left if it gets eaten, slide right if a white box remains.</p>
             </div>
             
-            <div class="p-4 flex justify-end gap-3 border-t border-gray-800 bg-[#0B192C]">
-                <button onclick="cancelUpload()" class="px-4 py-2 text-gray-400 hover:text-white text-sm font-medium transition">Cancel</button>
-                <button onclick="confirmUpload()" class="px-5 py-2 bg-hatimi-gold hover:bg-yellow-500 text-hatimi-navy font-bold rounded shadow transition text-sm">Save to Catalog</button>
+            <div class="p-3 sm:p-4 flex justify-end gap-2 sm:gap-3 border-t border-gray-800 bg-[#0B192C]">
+                <button onclick="cancelUpload()" class="px-3 sm:px-4 py-2 text-gray-400 hover:text-white text-xs sm:text-sm font-medium transition">Cancel</button>
+                <button onclick="confirmUpload()" class="px-4 sm:px-5 py-2 bg-hatimi-gold active:bg-yellow-500 hover:bg-yellow-500 text-hatimi-navy font-bold rounded shadow transition text-xs sm:text-sm">Save to Catalog</button>
             </div>
         </div>
     </div>
@@ -318,11 +324,14 @@
         let rotState = { door: 0, drawer: -90 };
         let flipState = { door: 1, drawer: 1 };
         let activeZoneForModal = 'door';
-        let originalUploadImage = new Image(); // Stores raw image for the eraser tuner
+        let originalUploadImage = new Image();
 
-        // 3D Door/Drawer Interactivity
+        // Mobile-safe 3D Door/Drawer Interactivity (prevents fast double-taps from zooming on some OS)
         document.querySelectorAll('.door-left, .door-right, .drawer-panel').forEach(panel => {
-            panel.addEventListener('click', function(e) { this.classList.toggle('is-open'); });
+            panel.addEventListener('click', function(e) { 
+                e.preventDefault(); 
+                this.classList.toggle('is-open'); 
+            });
         });
 
         // Catalog Logic
@@ -347,7 +356,7 @@
                 img.src = item.src;
 
                 const nameLabel = document.createElement('span');
-                nameLabel.className = 'text-[10px] text-gray-300 font-semibold text-center mt-auto w-full truncate tracking-wide';
+                nameLabel.className = 'text-[9px] sm:text-[10px] text-gray-300 font-semibold text-center mt-auto w-full truncate tracking-wide';
                 nameLabel.innerText = item.name;
 
                 div.appendChild(img);
@@ -356,9 +365,7 @@
                 if (index >= defaultInventory.length) {
                     const delBtn = document.createElement('button');
                     delBtn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
-                    delBtn.title = "Delete item";
-                    delBtn.className = 'absolute top-2 right-2 bg-red-500/80 text-white rounded w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-500 shadow';
-                    
+                    delBtn.className = 'absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500/80 text-white rounded w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-500 shadow';
                     delBtn.onclick = (e) => {
                         e.stopPropagation(); 
                         if(confirm(`Delete "${item.name}" from your catalog?`)) {
@@ -377,7 +384,7 @@
 
         function closeCatalog() { document.getElementById('catalog-modal').classList.add('hidden'); }
 
-        // --- NEW: UPLOAD WITH MAGIC ERASER TUNER ---
+        // Upload Preview Tuner
         function triggerUploadPreview(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -412,7 +419,6 @@
             const data = imageData.data;
             const w = canvas.width, h = canvas.height;
             
-            // Sample corner for background color
             const bgR = data[0], bgG = data[1], bgB = data[2];
 
             const stack = []; const visited = new Uint8Array(w * h);
@@ -423,49 +429,41 @@
                 const idx = stack.pop(); if (visited[idx]) continue;
                 const x = idx % w, y = Math.floor(idx / w), p = idx * 4;
                 const r = data[p], g = data[p+1], b = data[p+2];
-                
-                // Euclidean color distance
                 const colorDiff = Math.sqrt(Math.pow(r - bgR, 2) + Math.pow(g - bgG, 2) + Math.pow(b - bgB, 2));
 
                 if (colorDiff <= tolerance) {
-                    visited[idx] = 1; data[p + 3] = 0; // Transparent
+                    visited[idx] = 1; data[p + 3] = 0;
                     if (x > 0 && !visited[idx - 1]) stack.push(idx - 1);
                     if (x < w - 1 && !visited[idx + 1]) stack.push(idx + 1);
                     if (y > 0 && !visited[idx - w]) stack.push(idx - w);
                     if (y < h - 1 && !visited[idx + w]) stack.push(idx + w);
                 } else if (colorDiff <= tolerance + 15) {
-                    // Smooth Edge Anti-aliasing
-                    visited[idx] = 1; 
-                    const alphaRatio = (colorDiff - tolerance) / 15;
-                    data[p + 3] = Math.max(0, alphaRatio * 255);
+                    visited[idx] = 1; data[p + 3] = Math.max(0, ((colorDiff - tolerance) / 15) * 255);
                 }
             }
             ctx.putImageData(imageData, 0, 0);
         }
 
-        function cancelUpload() {
-            document.getElementById('upload-modal').classList.add('hidden');
-        }
+        function cancelUpload() { document.getElementById('upload-modal').classList.add('hidden'); }
 
         function confirmUpload() {
             const canvas = document.getElementById('preview-canvas');
             const transparentImgUrl = canvas.toDataURL('image/png');
 
-            let handleName = prompt("Name this hardware for your catalog (e.g., 'Silver 12in'):");
+            let handleName = prompt("Name this hardware for your catalog:");
             if (handleName !== null) {
                 handleName = handleName.trim() || `Custom Hardware`;
                 try {
                     let saved = JSON.parse(localStorage.getItem('hatimiHandles')) || [];
                     saved.push({ name: handleName, src: transparentImgUrl });
                     localStorage.setItem('hatimiHandles', JSON.stringify(saved));
-                } catch (err) { alert("Memory limit reached. Applied to wardrobe but not saved."); }
+                } catch (err) { alert("Memory limit reached. Applied but not saved."); }
             }
             injectHandles(transparentImgUrl, activeZoneForModal);
             document.getElementById('upload-modal').classList.add('hidden');
             closeCatalog();
         }
 
-        // --- HARDWARE PLACEMENT ---
         function injectHandles(source, targetZone) {
             let targetIDs = targetZone === 'door' ? ['door-left', 'door-right'] : ['drawer-top', 'drawer-bottom'];
             let cssClassBase = targetZone === 'door' ? 'pos-door' : 'pos-drawer';
