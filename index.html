@@ -7,35 +7,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --door-scale: 1;
-            --drawer-scale: 1;
-            --door-rot: 0deg;
-            --drawer-rot: -90deg;
-            --door-flip: 1;
-            --drawer-flip: 1;
+            --door-scale: 1; --drawer-scale: 1;
+            --door-rot: 0deg; --drawer-rot: -90deg;
+            --door-flip: 1; --drawer-flip: 1;
         }
 
-        /* Hatimi Premium Branding */
         .bg-hatimi-navy { background-color: #0B192C; }
         .text-hatimi-gold { color: #D4AF37; }
         .bg-hatimi-gold { background-color: #D4AF37; }
         .border-hatimi-gold { border-color: #D4AF37; }
         
-        body { overscroll-behavior-y: none; } /* Prevents pull-to-refresh on mobile */
+        body { overscroll-behavior-y: none; }
 
         .cabinet-panel {
             box-shadow: inset 2px 2px 5px rgba(255,255,255,0.2), inset -3px -3px 8px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.3);
             border: 1px solid rgba(0,0,0,0.8);
-            background-size: cover;
-            background-position: center;
-            background-color: #1a202c; 
+            background-size: cover; background-position: center; background-color: #1a202c; 
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
-            position: relative; 
-            overflow: visible;
-            transform-style: preserve-3d;
+            position: relative; overflow: visible; transform-style: preserve-3d;
         }
 
-        .wardrobe-container { perspective: 1200px; touch-action: none; } /* Stops mobile scroll interference */
+        .wardrobe-container { perspective: 1200px; touch-action: none; } 
         .door-left { transform-origin: left center; cursor: pointer; }
         .door-left.is-open { transform: rotateY(-105deg); }
         .door-right { transform-origin: right center; cursor: pointer; }
@@ -47,84 +39,58 @@
             position: absolute;
             transition: transform 0.3s ease, scale 0.3s ease;
             filter: drop-shadow(4px 6px 5px rgba(0,0,0,0.6));
-            object-fit: contain;
-            pointer-events: none; 
-            transform-origin: center center; 
+            object-fit: contain; pointer-events: none; transform-origin: center center; 
         }
 
-        .pos-door-l {
-            right: 15%; top: 50%; max-height: 180px; 
-            transform: translate(50%, -50%) scaleX(var(--door-flip)) rotate(var(--door-rot)) scale(var(--door-scale));
-        }
-        .pos-door-r {
-            left: 15%; top: 50%; max-height: 180px;
-            transform: translate(-50%, -50%) scaleX(calc(var(--door-flip) * -1)) rotate(calc(var(--door-rot) * -1)) scale(var(--door-scale));
-        }
-        .pos-drawer {
-            left: 50%; top: 50%; max-height: 70px; 
-            transform: translate(-50%, -50%) scaleX(var(--drawer-flip)) rotate(var(--drawer-rot)) scale(var(--drawer-scale));
-        }
+        .pos-door-l { right: 15%; top: 50%; max-height: 180px; transform: translate(50%, -50%) scaleX(var(--door-flip)) rotate(var(--door-rot)) scale(var(--door-scale)); }
+        .pos-door-r { left: 15%; top: 50%; max-height: 180px; transform: translate(-50%, -50%) scaleX(calc(var(--door-flip) * -1)) rotate(calc(var(--door-rot) * -1)) scale(var(--door-scale)); }
+        .pos-drawer { left: 50%; top: 50%; max-height: 70px; transform: translate(-50%, -50%) scaleX(var(--drawer-flip)) rotate(var(--drawer-rot)) scale(var(--drawer-scale)); }
 
         .btn-premium-card {
-            background: linear-gradient(145deg, #1f2937, #111827);
-            border: 1px solid #374151;
-            box-shadow: 2px 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
-            transition: all 0.2s ease;
+            background: linear-gradient(145deg, #1f2937, #111827); border: 1px solid #374151;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05); transition: all 0.2s ease;
         }
         .btn-premium-card:active, .btn-premium-card:hover {
-            border-color: #D4AF37;
-            background: linear-gradient(145deg, #273445, #111827);
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
-            transform: translateY(-1px);
+            border-color: #D4AF37; background: linear-gradient(145deg, #273445, #111827);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15), inset 0 1px 0 rgba(255,255,255,0.05); transform: translateY(-1px);
         }
 
-        /* Touch-friendly sliders */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]:focus { outline: none; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 20px; width: 20px; /* Larger for mobile tap */
-            border-radius: 50%; background: #D4AF37; cursor: pointer;
+            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #D4AF37; cursor: pointer;
             margin-top: -8px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); transition: transform 0.1s;
         }
         input[type=range]::-webkit-slider-thumb:active { transform: scale(1.2); }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 6px; cursor: pointer;
-            background: #374151; border-radius: 3px; border: 1px solid #1f2937;
-        }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #374151; border-radius: 3px; border: 1px solid #1f2937; }
 
         .catalog-item-large {
-            background: linear-gradient(145deg, #1f2937, #111827);
-            border: 1px solid #374151; border-radius: 8px;
+            background: linear-gradient(145deg, #1f2937, #111827); border: 1px solid #374151; border-radius: 8px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; padding: 12px 8px; transition: all 0.2s ease;
-            height: 120px; position: relative; box-shadow: 2px 4px 8px rgba(0,0,0,0.3);
+            cursor: pointer; padding: 12px 8px; transition: all 0.2s ease; height: 120px; position: relative; box-shadow: 2px 4px 8px rgba(0,0,0,0.3);
         }
-        .catalog-item-large:active, .catalog-item-large:hover {
-            border-color: #D4AF37; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
-        }
-        .catalog-item-large img {
-            max-height: 65px; max-width: 100%; object-fit: contain; 
-            filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.6)); margin-bottom: 8px;
-        }
+        .catalog-item-large:active, .catalog-item-large:hover { border-color: #D4AF37; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); }
+        .catalog-item-large img { max-height: 65px; max-width: 100%; object-fit: contain; filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.6)); margin-bottom: 8px; }
         
-        /* Checkboard for preview */
         .bg-checker {
             background-color: #e5e5f7;
             background-image:  linear-gradient(45deg, #c4c4c4 25%, transparent 25%), linear-gradient(-45deg, #c4c4c4 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #c4c4c4 75%), linear-gradient(-45deg, transparent 75%, #c4c4c4 75%);
-            background-size: 20px 20px;
-            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
         }
         
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0B192C; }
         ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+        /* Sync Loader Animation */
+        .sync-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<!-- flex-col on mobile, md:flex-row on desktop. overflow-y-auto enables natural mobile scroll -->
 <body class="bg-gray-300 h-screen flex flex-col md:flex-row overflow-y-auto md:overflow-hidden font-sans">
 
-    <!-- Left Side: Canvas (Responsive height: 50vh on mobile, full screen on desktop) -->
+    <!-- Left Side: Canvas -->
     <div class="w-full md:flex-1 h-[50vh] md:h-screen p-4 flex flex-col items-center justify-center relative shrink-0 z-10" id="canvas-container" style="background: radial-gradient(circle, #e2e8f0, #94a3b8);">
         <div id="ai-suggestion" class="absolute top-4 left-4 right-4 bg-hatimi-gold text-hatimi-navy font-bold p-3 rounded shadow-lg text-center hidden z-20 text-xs sm:text-sm"></div>
 
@@ -157,10 +123,16 @@
             <div id="fallback-logo" style="display:none;" class="w-10 h-10 bg-hatimi-gold rounded-lg items-center justify-center font-bold text-hatimi-navy text-xl shadow-[0_0_15px_rgba(212,175,55,0.4)]">H</div>
             <div>
                 <h1 class="text-lg sm:text-xl font-bold text-white tracking-wide">Hatimi Hardware</h1>
-                <h2 class="text-[10px] sm:text-xs font-light text-hatimi-gold tracking-widest uppercase">Pro Visualizer</h2>
+                <div class="flex items-center gap-2">
+                    <h2 class="text-[10px] sm:text-xs font-light text-hatimi-gold tracking-widest uppercase">Pro Visualizer</h2>
+                    <span id="sync-status" class="bg-green-600/30 text-green-400 border border-green-600 px-2 py-0.5 rounded-full text-[8px] uppercase tracking-wider hidden flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> Cloud Synced
+                    </span>
+                </div>
             </div>
         </div>
 
+        <!-- Step 1: Mica -->
         <div class="mb-5 sm:mb-6">
             <h3 class="text-[10px] uppercase tracking-widest text-gray-400 mb-2 sm:mb-3 font-semibold flex items-center gap-2">
                 <span class="w-4 h-[1px] bg-gray-500"></span> 1. Surface Laminate
@@ -180,6 +152,7 @@
             </div>
         </div>
 
+        <!-- Step 2: Door Hardware -->
         <div class="bg-gray-800/40 p-3 sm:p-4 rounded-xl border border-gray-700 mb-4 sm:mb-5 relative overflow-hidden">
             <div class="absolute left-0 top-0 w-1 h-full bg-hatimi-gold opacity-80"></div>
             <div class="flex justify-between items-center mb-3 sm:mb-4">
@@ -193,7 +166,6 @@
                     </button>
                 </div>
             </div>
-            
             <button onclick="openCatalog('door')" class="btn-premium-card w-full rounded-lg p-2 sm:p-3 flex items-center justify-between group mb-3 sm:mb-4">
                 <div class="flex items-center gap-2 sm:gap-3">
                     <div class="w-8 h-8 sm:w-9 sm:h-9 rounded bg-gray-900 border border-gray-700 flex items-center justify-center group-hover:border-hatimi-gold transition shadow-inner">
@@ -201,12 +173,11 @@
                     </div>
                     <div class="text-left">
                         <div class="text-gray-100 font-medium text-xs sm:text-sm">Select Door Handle</div>
-                        <div class="text-[9px] sm:text-[10px] text-gray-400">Open Master Inventory</div>
+                        <div class="text-[9px] sm:text-[10px] text-gray-400">Open Cloud Catalog</div>
                     </div>
                 </div>
                 <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 group-hover:text-hatimi-gold transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </button>
-            
             <div class="flex items-center gap-3 sm:gap-4 px-1">
                 <span class="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-widest">Size</span>
                 <input type="range" min="0.5" max="3.0" step="0.1" value="1" class="w-full" oninput="updateSize('door', this.value)">
@@ -214,6 +185,7 @@
             </div>
         </div>
 
+        <!-- Step 3: Drawer Hardware -->
         <div class="bg-gray-800/40 p-3 sm:p-4 rounded-xl border border-gray-700 mb-4 relative overflow-hidden">
             <div class="absolute left-0 top-0 w-1 h-full bg-gray-500 opacity-80"></div>
             <div class="flex justify-between items-center mb-3 sm:mb-4">
@@ -227,7 +199,6 @@
                     </button>
                 </div>
             </div>
-            
             <button onclick="openCatalog('drawer')" class="btn-premium-card w-full rounded-lg p-2 sm:p-3 flex items-center justify-between group mb-3 sm:mb-4">
                 <div class="flex items-center gap-2 sm:gap-3">
                     <div class="w-8 h-8 sm:w-9 sm:h-9 rounded bg-gray-900 border border-gray-700 flex items-center justify-center group-hover:border-gray-400 transition shadow-inner">
@@ -235,12 +206,11 @@
                     </div>
                     <div class="text-left">
                         <div class="text-gray-100 font-medium text-xs sm:text-sm">Select Drawer Handle</div>
-                        <div class="text-[9px] sm:text-[10px] text-gray-400">Open Master Inventory</div>
+                        <div class="text-[9px] sm:text-[10px] text-gray-400">Open Cloud Catalog</div>
                     </div>
                 </div>
                 <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </button>
-            
             <div class="flex items-center gap-3 sm:gap-4 px-1">
                 <span class="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-widest">Size</span>
                 <input type="range" min="0.3" max="3.0" step="0.1" value="1" class="w-full" oninput="updateSize('drawer', this.value)">
@@ -249,30 +219,32 @@
         </div>
     </div>
 
-    <!-- POPUP CATALOG MODAL (Responsive Grid) -->
+    <!-- CATALOG MODAL -->
     <div id="catalog-modal" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center backdrop-blur-sm p-3 sm:p-4">
         <div class="bg-[#0B192C] border border-gray-700 rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="flex justify-between items-center p-4 sm:p-5 border-b border-gray-800 bg-[#0B192C]">
                 <div>
-                    <h2 id="catalog-title" class="text-lg sm:text-xl font-bold text-white tracking-wide">Hardware Catalog</h2>
+                    <h2 class="text-lg sm:text-xl font-bold text-white tracking-wide flex items-center gap-2">
+                        Cloud Catalog
+                        <svg id="loading-spinner" class="w-5 h-5 text-hatimi-gold sync-spin hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </h2>
                 </div>
                 <button onclick="closeCatalog()" class="text-gray-500 hover:text-white transition w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-800">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
-            <!-- Mobile: 2 cols, Tablet: 3 cols, Desktop: 4+ cols -->
             <div id="catalog-grid" class="p-4 sm:p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5 overflow-y-auto bg-[#111827] flex-1 shadow-inner">
-                <!-- Handles injected here -->
+                <!-- Handles injected via Google Apps Script -->
             </div>
 
             <div class="p-4 sm:p-5 border-t border-gray-800 bg-[#0B192C]">
                 <div class="relative bg-[#111827] p-3 sm:p-4 rounded-lg border border-dashed border-hatimi-gold active:bg-gray-800 hover:bg-gray-800 transition cursor-pointer flex justify-center group">
                     <label class="flex items-center gap-2 sm:gap-3 cursor-pointer w-full justify-center">
                         <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-hatimi-gold/20 flex items-center justify-center group-hover:bg-hatimi-gold transition">
-                            <svg class="w-3 h-3 sm:w-4 sm:h-4 text-hatimi-gold group-hover:text-[#0B192C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            <svg class="w-3 h-3 sm:w-4 h-4 text-hatimi-gold group-hover:text-[#0B192C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         </div>
-                        <span id="upload-btn-text" class="text-xs sm:text-sm font-semibold text-hatimi-gold tracking-wide">Scan / Upload New Handle</span>
+                        <span id="upload-btn-text" class="text-xs sm:text-sm font-semibold text-hatimi-gold tracking-wide">Upload to Cloud</span>
                         <input type="file" accept="image/*" class="hidden" onchange="triggerUploadPreview(event)">
                     </label>
                 </div>
@@ -280,41 +252,45 @@
         </div>
     </div>
 
-    <!-- UPLOAD ERASER TUNER MODAL -->
+    <!-- ERASER TUNER MODAL -->
     <div id="upload-modal" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-3 sm:p-4 backdrop-blur-md">
         <div class="bg-[#0B192C] border border-gray-700 rounded-xl w-full max-w-md flex flex-col overflow-hidden shadow-2xl">
             <div class="p-3 sm:p-4 border-b border-gray-800 flex justify-between items-center">
                 <h2 class="text-white text-sm sm:text-base font-bold tracking-wide">Adjust Magic Eraser</h2>
             </div>
-            
             <div class="p-4 flex flex-col items-center bg-checker border-b border-gray-800">
                 <canvas id="preview-canvas" class="max-h-40 sm:max-h-48 object-contain filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]"></canvas>
             </div>
-            
             <div class="p-4 sm:p-5 bg-[#111827]">
                 <div class="flex justify-between items-end mb-2">
                     <label class="text-[10px] sm:text-xs text-gray-400">Eraser Strength</label>
                     <span id="tolerance-val" class="text-xs sm:text-sm font-mono text-hatimi-gold">20</span>
                 </div>
                 <input type="range" id="tolerance-slider" min="1" max="80" value="20" class="w-full" oninput="updatePreview()">
-                <p class="text-[9px] sm:text-[10px] text-gray-500 mt-3 italic leading-relaxed">Fixing a silver handle? Slide left if it gets eaten, slide right if a white box remains.</p>
             </div>
-            
             <div class="p-3 sm:p-4 flex justify-end gap-2 sm:gap-3 border-t border-gray-800 bg-[#0B192C]">
                 <button onclick="cancelUpload()" class="px-3 sm:px-4 py-2 text-gray-400 hover:text-white text-xs sm:text-sm font-medium transition">Cancel</button>
-                <button onclick="confirmUpload()" class="px-4 sm:px-5 py-2 bg-hatimi-gold active:bg-yellow-500 hover:bg-yellow-500 text-hatimi-navy font-bold rounded shadow transition text-xs sm:text-sm">Save to Catalog</button>
+                <button id="cloud-save-btn" onclick="confirmUploadToCloud()" class="px-4 sm:px-5 py-2 bg-hatimi-gold active:bg-yellow-500 hover:bg-yellow-500 text-hatimi-navy font-bold rounded shadow transition text-xs sm:text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                    Save to Cloud
+                </button>
             </div>
         </div>
     </div>
 
     <!-- JavaScript Logic -->
     <script>
+        // =========================================================================
+        // IMPORTANT: PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+        // =========================================================================
+        const SCRIPT_URL = 'PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE';
+        
         const svgGoldBar = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 150"><rect x="5" y="5" width="20" height="140" rx="6" fill="#D4AF37" stroke="#997A00" stroke-width="1"/><rect x="8" y="8" width="5" height="134" rx="3" fill="#FCF6BA" opacity="0.6"/></svg>');
         const svgBlackMatte = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 150"><rect x="7" y="5" width="16" height="140" rx="3" fill="#222" stroke="#000" stroke-width="2"/><rect x="10" y="10" width="3" height="130" rx="1" fill="#555" opacity="0.4"/></svg>');
         const svgSilverPull = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 150"><path d="M10,10 L30,10 L30,140 L10,140 Z" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1"/><path d="M5,20 L15,20 L15,130 L5,130 Z" fill="#CBD5E1"/></svg>');
         const svgGoldKnob = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="#D4AF37" stroke="#997A00" stroke-width="2"/><circle cx="20" cy="20" r="10" fill="#FCF6BA" opacity="0.6"/></svg>');
 
-        const defaultInventory = [
+        let cloudInventory = [
             { name: 'Premium Gold Bar', src: svgGoldBar },
             { name: 'Matte Black Profile', src: svgBlackMatte },
             { name: 'Silver G-Pull', src: svgSilverPull },
@@ -326,26 +302,50 @@
         let activeZoneForModal = 'door';
         let originalUploadImage = new Image();
 
-        // Mobile-safe 3D Door/Drawer Interactivity (prevents fast double-taps from zooming on some OS)
         document.querySelectorAll('.door-left, .door-right, .drawer-panel').forEach(panel => {
-            panel.addEventListener('click', function(e) { 
-                e.preventDefault(); 
-                this.classList.toggle('is-open'); 
-            });
+            panel.addEventListener('click', function(e) { e.preventDefault(); this.classList.toggle('is-open'); });
         });
 
-        // Catalog Logic
+        // --- GOOGLE SHEETS CLOUD SYNC ---
+        async function syncWithCloud() {
+            if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbzyzJ-r4m2ZfSgpuH-uZo7WGrJJGkx6DutvNav15wVMQA9D1zotuo-zkrwpet3XPcKj/exec') return;
+            
+            document.getElementById('loading-spinner').classList.remove('hidden');
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                
+                // Keep the 4 defaults, add the cloud data
+                cloudInventory = [
+                    { name: 'Premium Gold Bar', src: svgGoldBar },
+                    { name: 'Matte Black Profile', src: svgBlackMatte },
+                    { name: 'Silver G-Pull', src: svgSilverPull },
+                    { name: 'Gold Knob', src: svgGoldKnob }
+                ];
+                
+                data.forEach(item => {
+                    if(item.name && item.src) {
+                        cloudInventory.push({ name: item.name, src: item.src });
+                    }
+                });
+
+                document.getElementById('sync-status').classList.remove('hidden');
+            } catch (error) {
+                console.error("Cloud Sync Failed:", error);
+            }
+            document.getElementById('loading-spinner').classList.add('hidden');
+        }
+
+        // Run sync on load
+        window.onload = syncWithCloud;
+
         function openCatalog(zone) {
             activeZoneForModal = zone;
-            document.getElementById('catalog-title').innerText = zone === 'door' ? "Select Door Hardware" : "Select Drawer Hardware";
             const grid = document.getElementById('catalog-grid');
             grid.innerHTML = '';
             
-            let savedHandles = [];
-            try { savedHandles = JSON.parse(localStorage.getItem('hatimiHandles')) || []; } catch(e) {}
-            let allHandles = defaultInventory.concat(savedHandles);
-
-            allHandles.forEach((item, index) => {
+            // Render the live cloud inventory
+            cloudInventory.forEach((item) => {
                 const div = document.createElement('div');
                 div.className = 'catalog-item-large group';
                 div.title = item.name;
@@ -361,30 +361,14 @@
 
                 div.appendChild(img);
                 div.appendChild(nameLabel);
-
-                if (index >= defaultInventory.length) {
-                    const delBtn = document.createElement('button');
-                    delBtn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
-                    delBtn.className = 'absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500/80 text-white rounded w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-500 shadow';
-                    delBtn.onclick = (e) => {
-                        e.stopPropagation(); 
-                        if(confirm(`Delete "${item.name}" from your catalog?`)) {
-                            const savedIndex = index - defaultInventory.length;
-                            savedHandles.splice(savedIndex, 1);
-                            localStorage.setItem('hatimiHandles', JSON.stringify(savedHandles));
-                            openCatalog(activeZoneForModal); 
-                        }
-                    };
-                    div.appendChild(delBtn);
-                }
                 grid.appendChild(div);
             });
             document.getElementById('catalog-modal').classList.remove('hidden');
+            syncWithCloud(); // Fetch fresh data every time catalog opens
         }
 
         function closeCatalog() { document.getElementById('catalog-modal').classList.add('hidden'); }
 
-        // Upload Preview Tuner
         function triggerUploadPreview(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -407,7 +391,7 @@
             const tolerance = parseInt(document.getElementById('tolerance-slider').value);
             document.getElementById('tolerance-val').innerText = tolerance;
 
-            const MAX_SIZE = 300; let scale = 1;
+            const MAX_SIZE = 400; let scale = 1;
             if (originalUploadImage.width > MAX_SIZE || originalUploadImage.height > MAX_SIZE) { 
                 scale = Math.min(MAX_SIZE / originalUploadImage.width, MAX_SIZE / originalUploadImage.height); 
             }
@@ -418,7 +402,6 @@
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); 
             const data = imageData.data;
             const w = canvas.width, h = canvas.height;
-            
             const bgR = data[0], bgG = data[1], bgB = data[2];
 
             const stack = []; const visited = new Uint8Array(w * h);
@@ -446,22 +429,43 @@
 
         function cancelUpload() { document.getElementById('upload-modal').classList.add('hidden'); }
 
-        function confirmUpload() {
+        async function confirmUploadToCloud() {
+            if (SCRIPT_URL === 'PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE') {
+                alert("Please add your Google Apps Script URL to the code to save to the cloud.");
+                return;
+            }
+
             const canvas = document.getElementById('preview-canvas');
             const transparentImgUrl = canvas.toDataURL('image/png');
 
-            let handleName = prompt("Name this hardware for your catalog:");
-            if (handleName !== null) {
-                handleName = handleName.trim() || `Custom Hardware`;
-                try {
-                    let saved = JSON.parse(localStorage.getItem('hatimiHandles')) || [];
-                    saved.push({ name: handleName, src: transparentImgUrl });
-                    localStorage.setItem('hatimiHandles', JSON.stringify(saved));
-                } catch (err) { alert("Memory limit reached. Applied but not saved."); }
+            let handleName = prompt("Name this hardware for your database:");
+            if (handleName === null) return;
+            handleName = handleName.trim() || `Custom Hardware`;
+
+            const btn = document.getElementById('cloud-save-btn');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = `<svg class="w-4 h-4 sync-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Uploading...`;
+            btn.disabled = true;
+
+            try {
+                // Post to Google Apps Script
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ name: handleName, image: transparentImgUrl })
+                });
+                
+                // Immediately apply to screen
+                injectHandles(transparentImgUrl, activeZoneForModal);
+                document.getElementById('upload-modal').classList.add('hidden');
+                closeCatalog();
+                syncWithCloud(); // Refresh catalog quietly in background
+
+            } catch(e) {
+                alert("Cloud upload failed. Make sure your Google Script URL is correct.");
             }
-            injectHandles(transparentImgUrl, activeZoneForModal);
-            document.getElementById('upload-modal').classList.add('hidden');
-            closeCatalog();
+
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
         }
 
         function injectHandles(source, targetZone) {
